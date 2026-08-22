@@ -208,21 +208,29 @@ function initLogo(){
 }
 
 /* ---------------- Dibujo del QR en canvas ---------------- */
-function drawModule(ctx, x, y, size, shape, radiusRatio){
+function roundedRectPath(ctx, x, y, w, h, r){
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawModule(ctx, x, y, size, shape){
   ctx.beginPath();
   if(shape === 'square'){
     ctx.rect(x, y, size, size);
   } else if(shape === 'dots'){
     const r = size / 2;
-    ctx.arc(x + r, y + r, r * 0.86, 0, Math.PI * 2);
+    ctx.arc(x + r, y + r, r * 0.92, 0, Math.PI * 2);
   } else {
-    const r = size * radiusRatio;
-    const x2 = x + size, y2 = y + size;
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x2, y, x2, y2, r);
-    ctx.arcTo(x2, y2, x, y2, r);
-    ctx.arcTo(x, y2, x, y, r);
-    ctx.arcTo(x, y, x2, y, r);
+    // "rounded": radio generoso para que se note claramente redondeado
+    roundedRectPath(ctx, x, y, size, size, size * 0.5);
+    ctx.fill();
+    return;
   }
   ctx.closePath();
   ctx.fill();
@@ -237,42 +245,38 @@ function isInEyeZone(row, col, count){
   );
 }
 
-function drawEye(ctx, baseX, baseY, moduleSize, shape, color){
+// Dibuja cada ojo como TRES formas rellenas independientes (exterior, anillo
+// de fondo, interior). No usamos "recorte" (destination-out): eso dejaba el
+// anillo del medio realmente transparente, y al exportar a PNG se veían
+// esos cuadros raros en vez del color de fondo.
+function drawEye(ctx, baseX, baseY, moduleSize, shape, fgColor, bgColor){
   const outer = moduleSize * 7;
-  const midOffset = moduleSize;
   const mid = moduleSize * 5;
-  const innerOffset = moduleSize * 2;
   const inner = moduleSize * 3;
-
-  ctx.fillStyle = color;
-
-  function roundedRect(x, y, w, h, r){
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
-    ctx.closePath();
-  }
+  const cx = baseX + outer / 2;
+  const cy = baseY + outer / 2;
 
   if(shape === 'circle'){
-    ctx.beginPath(); ctx.arc(baseX + outer/2, baseY + outer/2, outer/2, 0, Math.PI*2); ctx.fill();
-    ctx.save(); ctx.globalCompositeOperation = 'destination-out';
-    ctx.beginPath(); ctx.arc(baseX + outer/2, baseY + outer/2, mid/2, 0, Math.PI*2); ctx.fill();
-    ctx.restore();
-    ctx.beginPath(); ctx.arc(baseX + outer/2, baseY + outer/2, inner/2, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = fgColor;
+    ctx.beginPath(); ctx.arc(cx, cy, outer / 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = bgColor;
+    ctx.beginPath(); ctx.arc(cx, cy, mid / 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = fgColor;
+    ctx.beginPath(); ctx.arc(cx, cy, inner / 2, 0, Math.PI * 2); ctx.fill();
   } else if(shape === 'rounded'){
-    roundedRect(baseX, baseY, outer, outer, moduleSize * 1.6); ctx.fill();
-    ctx.save(); ctx.globalCompositeOperation = 'destination-out';
-    roundedRect(baseX + midOffset, baseY + midOffset, mid, mid, moduleSize * 1.1); ctx.fill();
-    ctx.restore();
-    roundedRect(baseX + innerOffset, baseY + innerOffset, inner, inner, moduleSize * 0.8); ctx.fill();
+    ctx.fillStyle = fgColor;
+    roundedRectPath(ctx, baseX, baseY, outer, outer, moduleSize * 1.8); ctx.fill();
+    ctx.fillStyle = bgColor;
+    roundedRectPath(ctx, baseX + moduleSize, baseY + moduleSize, mid, mid, moduleSize * 1.2); ctx.fill();
+    ctx.fillStyle = fgColor;
+    roundedRectPath(ctx, baseX + moduleSize * 2, baseY + moduleSize * 2, inner, inner, moduleSize * 0.8); ctx.fill();
   } else {
+    ctx.fillStyle = fgColor;
     ctx.fillRect(baseX, baseY, outer, outer);
-    ctx.clearRect(baseX + midOffset, baseY + midOffset, mid, mid);
-    ctx.fillStyle = color;
-    ctx.fillRect(baseX + innerOffset, baseY + innerOffset, inner, inner);
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(baseX + moduleSize, baseY + moduleSize, mid, mid);
+    ctx.fillStyle = fgColor;
+    ctx.fillRect(baseX + moduleSize * 2, baseY + moduleSize * 2, inner, inner);
   }
 }
 
@@ -311,6 +315,9 @@ function paintQR(ctx, size, opts){
   }
 
   ctx.fillStyle = opts.fg;
+  // Si el fondo es transparente, los anillos de "hueco" de los ojos igual
+  // necesitan un color sólido para verse bien: usamos blanco por defecto.
+  const eyeBg = opts.transparent ? '#ffffff' : opts.bg;
 
   for(let row = 0; row < count; row++){
     for(let col = 0; col < count; col++){
@@ -318,7 +325,7 @@ function paintQR(ctx, size, opts){
       if(isInEyeZone(row, col, count)) continue;
       const x = (col + margin) * moduleSize;
       const y = (row + margin) * moduleSize;
-      drawModule(ctx, x, y, moduleSize, opts.moduleStyle, 0.35);
+      drawModule(ctx, x, y, moduleSize, opts.moduleStyle);
     }
   }
 
@@ -330,7 +337,7 @@ function paintQR(ctx, size, opts){
   eyePositions.forEach(([r, c])=>{
     const x = (c + margin) * moduleSize;
     const y = (r + margin) * moduleSize;
-    drawEye(ctx, x, y, moduleSize, opts.eyeStyle, opts.fg);
+    drawEye(ctx, x, y, moduleSize, opts.eyeStyle, opts.fg, eyeBg);
   });
 
   if(logoImage){

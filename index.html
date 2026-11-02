@@ -2,254 +2,292 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Mi QR</title>
+<meta name="description" content="Crea códigos QR permanentes con tu propio estilo: colores, forma de los módulos, esquinas redondeadas y tu logo en el centro.">
+<meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mi QR">
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Inter solo se usa como respaldo cuando el sistema no tiene SF Pro (Windows/Android). -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div id="errBanner"></div>
-<div class="bg-grid"></div>
-<div class="wrap">
+<div id="errBanner" role="alert"></div>
 
-  <header>
-    <div>
-      <h1>Mi QR</h1>
-      <p class="sub">Crea códigos QR permanentes con tu propio estilo: colores, forma de los módulos, esquinas redondeadas y tu logo en el centro.</p>
-    </div>
+<nav class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-title">Mi QR</span>
     <div class="header-actions">
-      <button class="customize-btn" id="openCustomize">⚙ Accesibilidad</button>
-      <button class="customize-btn" id="openHelp">❓ Ayuda</button>
-    </div>
-  </header>
-
-  <div class="panel">
-    <div class="panel-head">
-      <h2>Contenido del QR</h2>
-    </div>
-    <div class="tabs-bar" id="contentTabs">
-      <div class="tab active" data-type="url">Enlace</div>
-      <div class="tab" data-type="text">Texto</div>
-      <div class="tab" data-type="wifi">Wi-Fi</div>
-      <div class="tab" data-type="vcard">Contacto</div>
-    </div>
-
-    <div id="fieldsUrl" class="content-fields">
-      <div class="field-group" style="margin-bottom:0;">
-        <span class="field-label">URL de destino</span>
-        <input type="text" id="inputUrl" placeholder="https://mi-sitio.com" value="https://mi-sitio.com">
-      </div>
-    </div>
-
-    <div id="fieldsText" class="content-fields" hidden>
-      <div class="field-group" style="margin-bottom:0;">
-        <span class="field-label">Texto</span>
-        <textarea id="inputText" rows="3" placeholder="Escribe cualquier texto..."></textarea>
-      </div>
-    </div>
-
-    <div id="fieldsWifi" class="content-fields" hidden>
-      <div class="style-grid">
-        <div class="field-group" style="margin-bottom:0;">
-          <span class="field-label">Nombre de red (SSID)</span>
-          <input type="text" id="wifiSsid" placeholder="MiRedWifi">
-        </div>
-        <div class="field-group" style="margin-bottom:0;">
-          <span class="field-label">Contraseña</span>
-          <input type="text" id="wifiPass" placeholder="••••••••">
-        </div>
-        <div class="field-group" style="margin-bottom:0;">
-          <span class="field-label">Seguridad</span>
-          <select id="wifiSec">
-            <option value="WPA">WPA / WPA2</option>
-            <option value="WEP">WEP</option>
-            <option value="nopass">Sin contraseña</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div id="fieldsVcard" class="content-fields" hidden>
-      <div class="style-grid">
-        <div class="field-group" style="margin-bottom:0;">
-          <span class="field-label">Nombre completo</span>
-          <input type="text" id="vcName" placeholder="Ana Pérez">
-        </div>
-        <div class="field-group" style="margin-bottom:0;">
-          <span class="field-label">Teléfono</span>
-          <input type="text" id="vcPhone" placeholder="+57 300 000 0000">
-        </div>
-        <div class="field-group" style="margin-bottom:0;">
-          <span class="field-label">Correo</span>
-          <input type="text" id="vcEmail" placeholder="ana@correo.com">
-        </div>
-        <div class="field-group" style="margin-bottom:0;">
-          <span class="field-label">Empresa</span>
-          <input type="text" id="vcOrg" placeholder="Opcional">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-head">
-      <h2>Personalización</h2>
-      <button class="collapse-btn" id="collapseStyleBtn" title="Mostrar u ocultar esta sección">
-        <span id="collapseStyleIcon">▾</span>
+      <button class="customize-btn" id="openCustomize" type="button" aria-label="Accesibilidad">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>
+        <span class="btn-label">Accesibilidad</span>
+      </button>
+      <button class="customize-btn" id="openHelp" type="button" aria-label="Ayuda">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.4"/><path d="M12 16.9v.1"/></svg>
+        <span class="btn-label">Ayuda</span>
       </button>
     </div>
-    <div id="styleBody">
-      <div id="styleBodyInner">
-        <p class="hint">Ajusta la forma de los módulos, colores, tamaño y el logo central. La vista previa se actualiza automáticamente.</p>
-        <div class="style-grid">
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label">Forma de los módulos</span>
-            <select id="moduleStyle">
-              <option value="square" selected>Cuadrados (clásico)</option>
-              <option value="rounded">Redondeados</option>
-              <option value="dots">Puntos</option>
-            </select>
-          </div>
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label">Estilo de las esquinas (ojos)</span>
-            <select id="eyeStyle">
-              <option value="square" selected>Cuadradas (clásico)</option>
-              <option value="rounded">Redondeadas</option>
-              <option value="circle">Circulares</option>
-            </select>
-          </div>
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label">Color del QR</span>
-            <div class="bg-range-row">
-              <input type="color" id="fgColor" value="#000000">
-              <span class="bg-range-val" id="fgColorVal">#000000</span>
-            </div>
-          </div>
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label">Color de fondo</span>
-            <div class="bg-range-row">
-              <input type="color" id="bgColor" value="#FFFFFF">
-              <span class="bg-range-val" id="bgColorVal">#FFFFFF</span>
-            </div>
-          </div>
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label" style="margin-bottom:14px;">Fondo transparente</span>
-            <div class="toggle-row">
-              <label class="switch">
-                <input type="checkbox" id="transparentBgToggle">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label">Nivel de corrección de errores</span>
-            <select id="errorLevel">
-              <option value="L">Bajo (rápido de leer)</option>
-              <option value="M" selected>Medio</option>
-              <option value="Q">Alto</option>
-              <option value="H">Máximo (recomendado con logo)</option>
-            </select>
-          </div>
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label">Tamaño de la imagen</span>
-            <div class="bg-range-row">
-              <input type="range" id="sizeRange" min="200" max="1000" step="10" value="500">
-              <span class="bg-range-val" id="sizeVal">500px</span>
-            </div>
-          </div>
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label">Margen (zona en blanco)</span>
-            <div class="bg-range-row">
-              <input type="range" id="marginRange" min="0" max="8" step="1" value="2">
-              <span class="bg-range-val" id="marginVal">2 módulos</span>
-            </div>
-          </div>
-
-        </div>
-
-        <h3 class="style-subhead">Logo en el centro</h3>
-        <div class="style-grid">
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label">Imagen del logo</span>
-            <label class="file-btn" for="logoInput">🖼 Subir logo</label>
-            <input type="file" id="logoInput" accept="image/*" hidden>
-            <div class="bg-preview" id="logoPreview" hidden></div>
-            <button class="ghost" id="logoRemoveBtn" hidden style="margin-top:10px;">Eliminar logo</button>
-          </div>
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label">Tamaño del logo</span>
-            <div class="bg-range-row">
-              <input type="range" id="logoSizeRange" min="10" max="32" step="1" value="20">
-              <span class="bg-range-val" id="logoSizeVal">20%</span>
-            </div>
-          </div>
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label" style="margin-bottom:14px;">Fondo blanco tras el logo</span>
-            <div class="toggle-row">
-              <label class="switch">
-                <input type="checkbox" id="logoBgToggle" checked>
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-
-          <div class="field-group" style="margin-bottom:0;">
-            <span class="field-label" style="margin-bottom:14px;">Logo circular</span>
-            <div class="toggle-row">
-              <label class="switch">
-                <input type="checkbox" id="logoRoundToggle">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
+</nav>
 
-  <div class="panel">
-    <div class="panel-head">
-      <h2>Vista previa y descarga</h2>
-    </div>
-    <div class="qr-preview-area">
-      <div class="qr-canvas-wrap" id="qrCanvasWrap">
-        <canvas id="qrCanvas" width="500" height="500"></canvas>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>Mi QR</h1>
+    <p class="sub">Crea códigos QR permanentes con tu propio estilo: colores, forma de los módulos, esquinas redondeadas y tu logo en el centro.</p>
+  </header>
+
+  <div class="layout">
+
+    <section class="panel area-content" aria-labelledby="contentTitle">
+      <div class="panel-head">
+        <h2 id="contentTitle">Contenido</h2>
       </div>
-      <div class="qr-actions">
-        <p class="hint" id="qrHint" style="margin:0 0 4px;">Tu QR se genera al instante en el navegador. No caduca ni depende de ningún servidor externo.</p>
-        <div class="actions">
-          <button class="primary" id="downloadPng">⬇ Descargar PNG</button>
-          <button class="ghost" id="downloadSvg">⬇ Descargar SVG</button>
+      <div class="segmented" id="contentTabs" role="tablist" aria-label="Tipo de contenido">
+        <span class="seg-indicator" aria-hidden="true"></span>
+        <button class="tab active" type="button" role="tab" aria-selected="true" data-type="url">Enlace</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-type="text">Texto</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-type="wifi">Wi‑Fi</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-type="vcard">Contacto</button>
+      </div>
+
+      <div id="fieldsUrl" class="content-fields">
+        <label class="field-group">
+          <span class="field-label">URL de destino</span>
+          <input type="url" id="inputUrl" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="https://mi-sitio.com" value="https://mi-sitio.com">
+        </label>
+      </div>
+
+      <div id="fieldsText" class="content-fields" hidden>
+        <label class="field-group">
+          <span class="field-label">Texto</span>
+          <textarea id="inputText" rows="3" placeholder="Escribe cualquier texto…"></textarea>
+        </label>
+      </div>
+
+      <div id="fieldsWifi" class="content-fields" hidden>
+        <div class="style-grid">
+          <label class="field-group">
+            <span class="field-label">Nombre de red (SSID)</span>
+            <input type="text" id="wifiSsid" autocapitalize="off" spellcheck="false" placeholder="MiRedWifi">
+          </label>
+          <label class="field-group">
+            <span class="field-label">Contraseña</span>
+            <input type="text" id="wifiPass" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="••••••••">
+          </label>
+          <label class="field-group">
+            <span class="field-label">Seguridad</span>
+            <select id="wifiSec">
+              <option value="WPA">WPA / WPA2 / WPA3</option>
+              <option value="WEP">WEP</option>
+              <option value="nopass">Sin contraseña</option>
+            </select>
+          </label>
+          <div class="field-group">
+            <div class="toggle-row">
+              <span class="field-label inline">Red oculta</span>
+              <label class="switch">
+                <input type="checkbox" id="wifiHidden" aria-label="Red oculta">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div id="fieldsVcard" class="content-fields" hidden>
+        <div class="style-grid">
+          <label class="field-group">
+            <span class="field-label">Nombre completo</span>
+            <input type="text" id="vcName" autocomplete="name" placeholder="Ana Pérez">
+          </label>
+          <label class="field-group">
+            <span class="field-label">Teléfono</span>
+            <input type="tel" id="vcPhone" inputmode="tel" autocomplete="tel" placeholder="+57 300 000 0000">
+          </label>
+          <label class="field-group">
+            <span class="field-label">Correo</span>
+            <input type="email" id="vcEmail" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="ana@correo.com">
+          </label>
+          <label class="field-group">
+            <span class="field-label">Empresa</span>
+            <input type="text" id="vcOrg" autocomplete="organization" placeholder="Opcional">
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel area-preview preview-panel" aria-labelledby="previewTitle">
+      <div class="panel-head">
+        <h2 id="previewTitle">Vista previa</h2>
+        <span class="size-chip" id="sizeChip">500 × 500</span>
+      </div>
+      <div class="qr-canvas-wrap" id="qrCanvasWrap">
+        <canvas id="qrCanvas" width="500" height="500" role="img" aria-label="Vista previa del código QR"></canvas>
+      </div>
+      <p class="qr-warn" id="qrWarn" role="status" hidden></p>
+      <div class="actions">
+        <button class="primary" id="downloadPng" type="button">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          Descargar PNG
+        </button>
+        <div class="actions-row">
+          <button class="ghost" id="downloadSvg" type="button">Descargar SVG</button>
+          <button class="ghost" id="copyPng" type="button">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+            Copiar
+          </button>
+        </div>
+      </div>
+      <p class="hint" id="qrHint">Se genera al instante en tu navegador. No caduca ni depende de ningún servidor.</p>
+    </aside>
+
+    <section class="panel area-style" aria-labelledby="styleTitle">
+      <div class="panel-head">
+        <h2 id="styleTitle">Personalización</h2>
+        <button class="collapse-btn" id="collapseStyleBtn" type="button" aria-expanded="true" aria-controls="styleBody" aria-label="Mostrar u ocultar personalización">
+          <span id="collapseStyleIcon" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+        </button>
+      </div>
+      <div id="styleBody">
+        <div id="styleBodyInner">
+          <h3 class="style-subhead first">Forma</h3>
+          <div class="style-grid">
+            <label class="field-group">
+              <span class="field-label">Módulos</span>
+              <select id="moduleStyle">
+                <option value="square" selected>Cuadrados (clásico)</option>
+                <option value="rounded">Redondeados</option>
+                <option value="dots">Puntos</option>
+              </select>
+            </label>
+            <label class="field-group">
+              <span class="field-label">Esquinas (ojos)</span>
+              <select id="eyeStyle">
+                <option value="square" selected>Cuadradas (clásico)</option>
+                <option value="rounded">Redondeadas</option>
+                <option value="circle">Circulares</option>
+              </select>
+            </label>
+          </div>
+
+          <h3 class="style-subhead">Color</h3>
+          <div class="style-grid">
+            <div class="field-group">
+              <span class="field-label">Color del QR</span>
+              <div class="bg-range-row">
+                <input type="color" id="fgColor" value="#000000" aria-label="Color del QR">
+                <span class="bg-range-val" id="fgColorVal">#000000</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Color de fondo</span>
+              <div class="bg-range-row">
+                <input type="color" id="bgColor" value="#FFFFFF" aria-label="Color de fondo">
+                <span class="bg-range-val" id="bgColorVal">#FFFFFF</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <div class="toggle-row">
+                <span class="field-label inline">Fondo transparente</span>
+                <label class="switch">
+                  <input type="checkbox" id="transparentBgToggle" aria-label="Fondo transparente">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="style-subhead">Tamaño y lectura</h3>
+          <div class="style-grid">
+            <label class="field-group">
+              <span class="field-label">Corrección de errores</span>
+              <select id="errorLevel">
+                <option value="L">Baja (7 %) · más simple</option>
+                <option value="M" selected>Media (15 %)</option>
+                <option value="Q">Alta (25 %)</option>
+                <option value="H">Máxima (30 %) · ideal con logo</option>
+              </select>
+            </label>
+            <div class="field-group">
+              <span class="field-label">Tamaño de la imagen</span>
+              <div class="bg-range-row">
+                <input type="range" id="sizeRange" min="200" max="2000" step="10" value="500" aria-label="Tamaño de la imagen">
+                <span class="bg-range-val" id="sizeVal">500 px</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Margen (zona en blanco)</span>
+              <div class="bg-range-row">
+                <input type="range" id="marginRange" min="0" max="8" step="1" value="2" aria-label="Margen">
+                <span class="bg-range-val" id="marginVal">2 módulos</span>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="style-subhead">Logo en el centro</h3>
+          <div class="style-grid">
+            <div class="field-group">
+              <span class="field-label">Imagen del logo</span>
+              <div class="logo-row">
+                <div class="bg-preview" id="logoPreview" hidden></div>
+                <label class="file-btn" for="logoInput">
+                  <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-8 8"/></svg>
+                  <span id="logoBtnLabel">Subir logo</span>
+                </label>
+                <input type="file" id="logoInput" accept="image/*" hidden>
+                <button class="ghost danger-text" id="logoRemoveBtn" type="button" hidden>Quitar</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Tamaño del logo</span>
+              <div class="bg-range-row">
+                <input type="range" id="logoSizeRange" min="10" max="32" step="1" value="20" aria-label="Tamaño del logo">
+                <span class="bg-range-val" id="logoSizeVal">20 %</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <div class="toggle-row">
+                <span class="field-label inline">Fondo detrás del logo</span>
+                <label class="switch">
+                  <input type="checkbox" id="logoBgToggle" checked aria-label="Fondo detrás del logo">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="field-group">
+              <div class="toggle-row">
+                <span class="field-label inline">Logo circular</span>
+                <label class="switch">
+                  <input type="checkbox" id="logoRoundToggle" aria-label="Logo circular">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <footer class="site-footer">
-    <span class="credit">Hecho por <strong style="color:var(--ink); font-weight:600;">José Luciano Mejía Arias</strong> · v1.0.0</span>
+    <span class="credit">Hecho por <strong>José Luciano Mejía Arias</strong> · v1.1.0</span>
     <div class="socials">
       <a href="https://instagram.com/lucianomejia17" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
         Instagram
       </a>
       <a href="https://github.com/LucianoMejia" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.5 0-.24-.01-1.05-.01-1.9-2.78.62-3.37-1.22-3.37-1.22-.46-1.2-1.11-1.53-1.11-1.53-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.56 2.36 1.11 2.93.85.09-.67.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.79-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .28.18.6.69.5A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.5 0-.24-.01-1.05-.01-1.9-2.78.62-3.37-1.22-3.37-1.22-.46-1.2-1.11-1.53-1.11-1.53-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.56 2.36 1.11 2.93.85.09-.67.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.79-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .28.18.6.69.5A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
         GitHub
       </a>
       <a href="https://www.linkedin.com/in/jos%C3%A9-luciano-mej%C3%ADa-arias-a35806383/" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 8.5H3.56V20.5H6.94V8.5Z"/><path d="M5.25 3.5A1.94 1.94 0 1 0 5.25 7.38 1.94 1.94 0 0 0 5.25 3.5Z"/><path d="M20.5 20.5H17.13v-6.3c0-1.5-.03-3.44-2.1-3.44-2.1 0-2.42 1.64-2.42 3.33v6.41H9.23V8.5h3.24v1.64h.05c.45-.85 1.55-1.75 3.2-1.75 3.42 0 4.06 2.25 4.06 5.18v6.93Z"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 8.5H3.56V20.5H6.94V8.5Z"/><path d="M5.25 3.5A1.94 1.94 0 1 0 5.25 7.38 1.94 1.94 0 0 0 5.25 3.5Z"/><path d="M20.5 20.5H17.13v-6.3c0-1.5-.03-3.44-2.1-3.44-2.1 0-2.42 1.64-2.42 3.33v6.41H9.23V8.5h3.24v1.64h.05c.45-.85 1.55-1.75 3.2-1.75 3.42 0 4.06 2.25 4.06 5.18v6.93Z"/></svg>
         LinkedIn
       </a>
     </div>
@@ -257,56 +295,53 @@
 </div>
 
 <div class="overlay" id="overlay"></div>
-<div class="drawer" id="drawer">
-  <button class="drawer-close" id="closeDrawer">×</button>
-  <h3>Accesibilidad</h3>
-  <p class="hint">Ajustes de accesibilidad y apariencia de la página. No afectan al QR generado.</p>
-
-  <p class="field-label" style="font-size:12px; margin-bottom:14px; opacity:.7;">— Apariencia —</p>
-
-  <div class="field-group">
-    <span class="field-label">Color de acento</span>
-    <div class="swatches" id="swatches"></div>
-    <p class="hint" style="margin:10px 0 0;">Se aplica a toda la página: botones, enlaces, selección y acentos.</p>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true">
+  <div class="drawer-grabber" aria-hidden="true"></div>
+  <div class="drawer-head">
+    <h3 id="drawerTitle">Accesibilidad</h3>
+    <button class="drawer-close" id="closeDrawer" type="button" aria-label="Cerrar">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg>
+    </button>
   </div>
+  <p class="hint">Ajustes de la página. No cambian el QR que generas.</p>
 
-  <div class="field-group">
-    <div class="toggle-row">
-      <span class="field-label" style="margin-bottom:0;">Tema claro / oscuro</span>
+  <p class="group-title">Apariencia</p>
+  <div class="group">
+    <div class="group-row stack">
+      <span class="row-label">Color de acento</span>
+      <div class="swatches" id="swatches"></div>
+    </div>
+    <div class="group-row">
+      <span class="row-label">Modo oscuro</span>
       <label class="switch">
-        <input type="checkbox" id="darkToggle">
+        <input type="checkbox" id="darkToggle" aria-label="Modo oscuro">
         <span class="slider"></span>
       </label>
     </div>
   </div>
 
-  <p class="field-label" style="font-size:12px; margin:26px 0 14px; opacity:.7;">— Lectura y comodidad —</p>
-
-  <div class="field-group">
-    <span class="field-label">Tamaño de letra</span>
-    <select id="fontScaleSelect">
-      <option value="0.9">Pequeña</option>
-      <option value="1">Normal</option>
-      <option value="1.12">Grande</option>
-      <option value="1.25">Muy grande</option>
-    </select>
-  </div>
-
-  <div class="field-group">
-    <div class="toggle-row">
-      <span class="field-label" style="margin-bottom:0;">Alto contraste</span>
+  <p class="group-title">Lectura y comodidad</p>
+  <div class="group">
+    <div class="group-row">
+      <span class="row-label">Tamaño de letra</span>
+      <select id="fontScaleSelect" class="compact" aria-label="Tamaño de letra">
+        <option value="0.9">Pequeña</option>
+        <option value="1">Normal</option>
+        <option value="1.12">Grande</option>
+        <option value="1.25">Muy grande</option>
+      </select>
+    </div>
+    <div class="group-row">
+      <span class="row-label">Alto contraste</span>
       <label class="switch">
-        <input type="checkbox" id="contrastToggle">
+        <input type="checkbox" id="contrastToggle" aria-label="Alto contraste">
         <span class="slider"></span>
       </label>
     </div>
-  </div>
-
-  <div class="field-group">
-    <div class="toggle-row">
-      <span class="field-label" style="margin-bottom:0;">Reducir movimiento</span>
+    <div class="group-row">
+      <span class="row-label">Reducir movimiento</span>
       <label class="switch">
-        <input type="checkbox" id="motionToggle">
+        <input type="checkbox" id="motionToggle" aria-label="Reducir movimiento">
         <span class="slider"></span>
       </label>
     </div>
@@ -314,42 +349,35 @@
 </div>
 
 <div class="overlay" id="helpOverlay"></div>
-<div class="drawer" id="helpDrawer">
-  <button class="drawer-close" id="closeHelpDrawer">×</button>
-  <h3>Cómo usar Mi QR</h3>
-
-  <p class="field-label" style="font-size:12px; margin-bottom:14px; opacity:.7;">— Primeros pasos —</p>
-
-  <div class="field-group">
-    <h4 class="help-section-title">1. Elige el tipo de contenido</h4>
-    <p class="help-text">Enlace, texto libre, red Wi-Fi o tarjeta de contacto (vCard). Completa los campos correspondientes.</p>
+<div class="drawer" id="helpDrawer" role="dialog" aria-modal="true" aria-labelledby="helpTitle" aria-hidden="true">
+  <div class="drawer-grabber" aria-hidden="true"></div>
+  <div class="drawer-head">
+    <h3 id="helpTitle">Cómo usar Mi QR</h3>
+    <button class="drawer-close" id="closeHelpDrawer" type="button" aria-label="Cerrar">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg>
+    </button>
   </div>
 
-  <div class="field-group">
-    <h4 class="help-section-title">2. Personaliza el estilo</h4>
-    <p class="help-text">Cambia la forma de los módulos, el estilo de las esquinas, colores, tamaño y margen. Todo se refleja al instante en la vista previa.</p>
+  <p class="group-title">Primeros pasos</p>
+  <ol class="steps">
+    <li><h4 class="help-section-title">Elige el tipo de contenido</h4><p class="help-text">Enlace, texto libre, red Wi‑Fi o tarjeta de contacto (vCard). Completa los campos correspondientes.</p></li>
+    <li><h4 class="help-section-title">Personaliza el estilo</h4><p class="help-text">Cambia la forma de los módulos, las esquinas, los colores, el tamaño y el margen. Todo se ve al instante en la vista previa.</p></li>
+    <li><h4 class="help-section-title">Agrega tu logo (opcional)</h4><p class="help-text">Sube una imagen para el centro del QR. Al hacerlo, la corrección de errores pasa a «Máxima» para que el código siga siendo legible.</p></li>
+    <li><h4 class="help-section-title">Descarga o copia</h4><p class="help-text">PNG para redes e impresión, SVG para escalar sin perder calidad (incluye el logo), o «Copiar» para pegarlo directo en otra app.</p></li>
+  </ol>
+
+  <p class="group-title">Bueno saber</p>
+  <div class="group text">
+    <h4 class="help-section-title">¿Por qué es permanente?</h4>
+    <p class="help-text">El contenido queda codificado en el propio QR: no depende de este sitio ni de ningún servidor. Solo asegúrate de que la URL o el dato que codifiques no cambie.</p>
   </div>
-
-  <div class="field-group">
-    <h4 class="help-section-title">3. Agrega tu logo (opcional)</h4>
-    <p class="help-text">Sube una imagen para colocarla en el centro del QR. Con logo, se recomienda usar corrección de errores "Máximo" para que el código siga siendo legible.</p>
-  </div>
-
-  <div class="field-group">
-    <h4 class="help-section-title">4. Descarga</h4>
-    <p class="help-text">Descarga tu QR como PNG (ideal para redes e impresión) o como SVG (vectorial, se puede escalar sin perder calidad).</p>
-  </div>
-
-  <p class="field-label" style="font-size:12px; margin:26px 0 14px; opacity:.7;">— Permanencia —</p>
-
-  <div class="field-group">
-    <h4 class="help-section-title">¿Por qué es "permanente"?</h4>
-    <p class="help-text">El contenido queda codificado directamente en el propio QR: no depende de este sitio ni de ningún servidor para funcionar. Solo asegúrate de que la URL o el dato que codifiques sea estable en el tiempo.</p>
-  </div>
-
-  <div class="field-group">
+  <div class="group text">
     <h4 class="help-section-title">Corrección de errores</h4>
-    <p class="help-text">A mayor nivel de corrección, el QR tolera más suciedad, daño o un logo más grande sin dejar de ser legible — pero el código resulta más denso.</p>
+    <p class="help-text">A mayor nivel, el QR tolera más suciedad, daño o un logo más grande, pero el código se vuelve más denso.</p>
+  </div>
+  <div class="group text">
+    <h4 class="help-section-title">Contraste</h4>
+    <p class="help-text">Los lectores necesitan módulos oscuros sobre fondo claro. Si eliges colores con poco contraste, la vista previa te avisará.</p>
   </div>
 </div>
 
